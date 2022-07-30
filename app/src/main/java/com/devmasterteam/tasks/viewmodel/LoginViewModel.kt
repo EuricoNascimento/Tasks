@@ -9,16 +9,26 @@ import com.devmasterteam.tasks.service.listener.APIListener
 import com.devmasterteam.tasks.service.model.PersonModel
 import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
+import com.devmasterteam.tasks.service.repository.SecurityPreferences
+import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var personRepository = PersonRepository(application.applicationContext)
+    private val personRepository = PersonRepository(application.applicationContext)
+    private val securityPreferences = SecurityPreferences(application.applicationContext)
     private val _login = MutableLiveData<ValidationModel>()
     var login: LiveData<ValidationModel> = _login
+    private val _loggedUser = MutableLiveData<Boolean>()
+    var loggedUser: LiveData<Boolean> = _loggedUser
 
     fun doLogin(email: String, password: String) {
         personRepository.login(email, password, object: APIListener<PersonModel>{
             override fun onSucess(result: PersonModel) {
+                securityPreferences.store(TaskConstants.SHARED.TOKEN_KEY, result.token)
+                securityPreferences.store(TaskConstants.SHARED.PERSON_KEY, result.personKey)
+                securityPreferences.store(TaskConstants.SHARED.PERSON_NAME, result.name)
+
+                RetrofitClient.addHeaders(result.token, result.personKey)
                 _login.value = ValidationModel()
             }
 
@@ -29,7 +39,11 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun verifyLoggedUser() {
+    fun verifyLoggedUser(){
+        val personKey = securityPreferences.get(TaskConstants.SHARED.PERSON_KEY)
+        val token = securityPreferences.get(TaskConstants.SHARED.TOKEN_KEY)
+
+        _loggedUser.value = personKey != "" && token != ""
     }
 
 }
