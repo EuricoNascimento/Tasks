@@ -8,11 +8,12 @@ import com.devmasterteam.tasks.service.model.PriorityModel
 import com.devmasterteam.tasks.service.repository.local.TaskDatabase
 import com.devmasterteam.tasks.service.repository.remote.PriorityService
 import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PriorityRepository(val context: Context) {
+class PriorityRepository(val context: Context): BaseRepository() {
     private val remote = RetrofitClient.getService(PriorityService::class.java)
     private val dataBase = TaskDatabase.getDatabase(context).priorityDao()
 
@@ -23,7 +24,7 @@ class PriorityRepository(val context: Context) {
                 call: Call<List<PriorityModel>>,
                 response: Response<List<PriorityModel>>
             ) {
-                response.body()?.let { listener.onSucess(it) }
+                handleResponse(response, listener)
             }
 
             override fun onFailure(call: Call<List<PriorityModel>>, t: Throwable) {

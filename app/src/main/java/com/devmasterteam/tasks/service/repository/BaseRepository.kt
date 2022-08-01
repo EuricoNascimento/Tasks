@@ -10,6 +10,7 @@ open class BaseRepository {
     fun <T> handleResponse(response: Response<T>, listener: APIListener<T>){
         if(response.code() == TaskConstants.HTTP.SUCCESS){
             response.body()?.let { listener.onSucess(it) }
+
         } else{
             listener.onFailure(failResponse(response.errorBody()!!.string()))
         }

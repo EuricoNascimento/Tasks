@@ -37,8 +37,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 _login.value = ValidationModel()
             }
 
-            override fun onFailure(message: String) {
-                _login.value = ValidationModel(message)
+            override fun onFailure(message: String) { _login.value = ValidationModel(message)
             }
 
         })
