@@ -30,4 +30,34 @@ class TaskRepository(val context: Context): BaseRepository() {
         })
     }
 
+    fun listAll(listener: APIListener<List<TaskModel>>){
+        val call = remote.list()
+        list(call, listener)
+    }
+
+    fun listNextDays(listener: APIListener<List<TaskModel>>){
+        val call = remote.listNextDays()
+        list(call, listener)
+    }
+
+    fun listOverdue(listener: APIListener<List<TaskModel>>){
+        val call = remote.listOverdue()
+        list(call, listener)
+    }
+
+    private fun list(call: Call<List<TaskModel>>, listener: APIListener<List<TaskModel>>){
+        call.enqueue(object : Callback<List<TaskModel>>{
+            override fun onResponse(
+                call: Call<List<TaskModel>>,
+                response: Response<List<TaskModel>>
+            ) {
+                handleResponse(response, listener)
+            }
+
+            override fun onFailure(call: Call<List<TaskModel>>, t: Throwable) {
+                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))
+            }
+
+        })
+    }
 }
