@@ -13,4 +13,6 @@ class TaskModel {
     var dueDate:String = ""
     @SerializedName("Complete")
     var complete:Boolean = false
+
+    var priorityDescription:String = ""
 }

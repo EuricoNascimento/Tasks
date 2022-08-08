@@ -45,8 +45,7 @@ interface TaskService {
     @FormUrlEncoded
     fun undo(@Field("Id") id: Int): Call<Boolean>
 
-    //TODO VAI DAR ERRO
-    @DELETE("Task")
+    @HTTP(method = "DELETE", path = "Task", hasBody = true)
     @FormUrlEncoded
     fun delete(@Field("Id") id: Int): Call<Boolean>
 }

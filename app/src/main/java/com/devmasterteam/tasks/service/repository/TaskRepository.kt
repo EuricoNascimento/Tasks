@@ -45,6 +45,20 @@ class TaskRepository(val context: Context): BaseRepository() {
         list(call, listener)
     }
 
+    fun delete(id: Int, listener: APIListener<Boolean>){
+        val call = remote.delete(id)
+        call.enqueue(object : Callback<Boolean>{
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                handleResponse(response, listener)
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))
+            }
+
+        })
+    }
+
     private fun list(call: Call<List<TaskModel>>, listener: APIListener<List<TaskModel>>){
         call.enqueue(object : Callback<List<TaskModel>>{
             override fun onResponse(

@@ -37,7 +37,7 @@ class AllTasksFragment : Fragment() {
             }
 
             override fun onDeleteClick(id: Int) {
-                TODO("Not yet implemented")
+                viewModel.delete(id)
             }
 
             override fun onCompleteClick(id: Int) {
@@ -52,12 +52,15 @@ class AllTasksFragment : Fragment() {
 
         adapter.attachListener(listener)
 
-        viewModel.list()
-
         // Cria os observadores
         observe()
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.list()
     }
 
     override fun onDestroyView() {
@@ -71,7 +74,13 @@ class AllTasksFragment : Fragment() {
         }
 
         viewModel.loadList.observe(viewLifecycleOwner) {
-            if(it.status()){
+            if(!it.status()){
+                Toast.makeText(context,it.message(),Toast.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.delete.observe(viewLifecycleOwner) {
+            if(!it.status()){
                 Toast.makeText(context,it.message(),Toast.LENGTH_LONG).show()
             }
         }
